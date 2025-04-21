@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "docker-build",
+            "type": "shell",
+            "command": "docker build -t evpython-app .",
+            "problemMatcher": []
+        },
+        {
+            "label": "docker-build-debug",
+            "type": "shell",
+            "command": "cp .dockerignore.debug .dockerignore && docker build -f Dockerfile.debug -t evpython-debug . && git checkout .dockerignore",
+            "problemMatcher": []
+        }
+    ]
+}

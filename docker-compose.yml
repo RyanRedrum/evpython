@@ -1,0 +1,6 @@
+services:
+  evpython:
+    image: evpython
+    build:
+      context: .
+      dockerfile: ./Dockerfile
