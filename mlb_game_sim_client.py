@@ -36,7 +36,13 @@ class MLBGameSimClient:
                         home_team = None
 
                     # Convert the time column to a full UTC datetime
-                    game_time_str = cols[0].text.strip()  # Example: "1:35 PM"
+                    game_time_str = cols[0].text.strip()  # Example: "7 PM" or "1:35 PM"
+
+                    # Check if the time string is missing minutes and append ":00" before "PM" or "AM"
+                    if re.match(r"^\d{1,2} [AP]M$", game_time_str):  # Matches "7 PM" or "12 AM"
+                        game_time_str = game_time_str.replace(" AM", ":00 AM").replace(" PM", ":00 PM")
+
+                    # Parse the time string and convert it to a datetime object
                     today = datetime.now(local_tz).date()  # Get today's date in the local timezone
                     local_game_time = local_tz.localize(
                         datetime.strptime(game_time_str, "%I:%M %p").replace(
