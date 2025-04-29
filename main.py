@@ -42,10 +42,16 @@ class EvPythonGenerator:
 
         for odds in odds_data:
             for prediction in predictions:
+                # Extract the last word of the team names for comparison
+                odds_home_team = odds['home_team'].split()[-1]
+                odds_away_team = odds['away_team'].split()[-1]
+                prediction_home_team = prediction['home_team'].split()[-1]
+                prediction_away_team = prediction['away_team'].split()[-1]
+
                 # Match by home team, away team, and start time
                 if (
-                    odds['home_team'] == prediction['home_team'] and
-                    odds['away_team'] == prediction['away_team'] and
+                    odds_home_team == prediction_home_team and
+                    odds_away_team == prediction_away_team and
                     self.compare_times(odds['start_time'], prediction['time'])
                 ):
                     # Convert start_time to local time and format it for Google Sheets
@@ -67,11 +73,14 @@ class EvPythonGenerator:
         return merged_data
 
     def compare_times(self, odds_time, prediction_time):
-        """Compare two times to see if they match (both in UTC)."""
+        """Compare two times to see if they match by hour and date (both in UTC)."""
         try:
-            odds_dt = odds_time
-            prediction_dt = prediction_time
-            return odds_dt == prediction_dt
+            # Ensure both times are datetime objects
+            odds_dt = datetime.fromisoformat(odds_time.replace("Z", "+00:00"))
+            prediction_dt = datetime.fromisoformat(prediction_time.replace("Z", "+00:00"))
+
+            # Compare the date and hour
+            return odds_dt.date() == prediction_dt.date() and odds_dt.hour == prediction_dt.hour
         except ValueError:
             return False
 
